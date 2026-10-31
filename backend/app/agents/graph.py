@@ -150,6 +150,8 @@ async def run_audit_pipeline(
             audit.audit_score = accumulated_state.get("audit_score", 0)
             audit.hospital_verified = accumulated_state.get("hospital_verified", False)
             audit.hospital_tier = accumulated_state.get("hospital_tier", "tier2")
+            audit.patient_state = patient_details.state
+            audit.patient_city = patient_details.city
             audit.pdf_report_url = f"/reports/{audit_id}.pdf" if accumulated_state.get("pdf_report_path") else None
             audit.error_message = accumulated_state.get("error_message")
 
@@ -243,7 +245,7 @@ async def run_grievance_pipeline(
         "audit_id": audit_id,
         "audit_summary": f"PM-JAY Audit: Overbilled ₹{audit_result.total_excess:,.2f}",
         "hospital_name": audit_result.bill.hospital_name if audit_result.bill else "Hospital",
-        "patient_state": "Delhi",
+        "patient_state": getattr(audit_result, "patient_state", None) or "Delhi",
         "total_excess": float(audit_result.total_excess),
         "violations_summary": violations_summary,
         "pdf_report_path": audit_result.pdf_report_url,

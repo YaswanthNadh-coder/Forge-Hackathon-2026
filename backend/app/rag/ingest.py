@@ -4,13 +4,19 @@ Parses the official NHA Health Benefit Package Master (HBP 2022) PDF/XLSX/CSV/JS
 and indexes packages and procedures into Qdrant for hybrid dense + BM25 search.
 """
 
+from __future__ import annotations
+
 import os
 import json
 import uuid
 import logging
 from pathlib import Path
 from typing import List, Dict, Any
-from qdrant_client import models
+
+try:
+    from qdrant_client import models
+except ImportError:
+    models = None
 
 from app.config import settings
 from app.rag.qdrant_store import qdrant_manager

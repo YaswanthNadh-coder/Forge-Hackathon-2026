@@ -8,11 +8,17 @@ when the vector database is initializing or running in standalone mode.
 import os
 import re
 import json
+import zlib
+import asyncio
 import logging
 from pathlib import Path
 from collections import Counter
 from typing import List, Dict, Tuple, Any
-from google import genai
+
+try:
+    from google import genai
+except ImportError:
+    genai = None
 
 from app.config import settings
 from app.rag.qdrant_store import qdrant_manager
@@ -60,35 +66,38 @@ def _tokenize(text: str) -> List[str]:
 
 
 def _get_sparse_vector(text: str) -> Tuple[List[int], List[float]]:
-    """Generate a sparse TF vector for BM25."""
-    global _vocab, _vocab_counter
-
+    """
+    Generate a sparse TF vector for BM25 with deterministic hashing.
+    Indices are stable across server restarts, machines, and worker threads.
+    """
     tokens = _tokenize(text)
     if not tokens:
         return [], []
 
     tf = Counter(tokens)
-    indices = []
-    values = []
+    # Deduplicate indices in case of hash collisions
+    index_map: Dict[int, float] = {}
 
     for token, count in tf.items():
-        if token not in _vocab:
-            _vocab[token] = _vocab_counter
-            _vocab_counter += 1
-        indices.append(_vocab[token])
-        values.append(float(count))
+        idx = int((zlib.crc32(token.encode("utf-8")) & 0x7FFFFFFF) % 1_000_000)
+        index_map[idx] = index_map.get(idx, 0.0) + float(count)
+
+    sorted_pairs = sorted(index_map.items())
+    indices = [p[0] for p in sorted_pairs]
+    values = [p[1] for p in sorted_pairs]
 
     return indices, values
 
 
 async def get_embedding(text: str) -> List[float]:
     """Get dense embedding from Gemini embedding model."""
-    if not settings.has_gemini_key:
+    if not settings.has_gemini_key or not genai:
         return [0.0] * 768
 
     try:
         client = genai.Client(api_key=settings.gemini_api_key)
-        result = client.models.embed_content(
+        result = await asyncio.to_thread(
+            client.models.embed_content,
             model="text-embedding-004",
             contents=text,
         )

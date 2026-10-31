@@ -34,7 +34,7 @@
       "included_icu_days": 1,
       "implant_ceiling_inr": 34125,
       "bundled_items": [
-        "Single DES (NPPA capped at ₹34,125 inclusive of GST)",
+        "Single DES (NPPA capped at \u20b934,125 inclusive of GST)",
         "Balloon catheter, guide catheter, guide wire",
         "Cath lab procedure charges & fluoroscopy time",
         "ICU monitoring for 24 hours",
@@ -376,6 +376,261 @@
         "Immunohistochemistry (ER, PR, HER2-neu) status evaluation",
         "Post-operative compression dressings and arm lymphedema physiotherapy"
       ]
+    },
+    {
+      "package_code": "EN001A",
+      "procedure_name": "Tympanoplasty / Myringoplasty for Chronic Otitis Media",
+      "specialty": "Otorhinolaryngology (ENT)",
+      "rate_tier1": 18000,
+      "rate_tier2": 15000,
+      "rate_tier3": 13500,
+      "included_ward_days": 2,
+      "included_icu_days": 0,
+      "implant_ceiling_inr": 2000,
+      "bundled_items": [
+        "Operating microscope charges, micro-instruments, gel foam",
+        "Temporalis fascia graft harvesting",
+        "Local / general anesthesia, surgeon and nursing fee",
+        "Pre-op audiometry and post-op antibiotic ear pack"
+      ]
+    },
+    {
+      "package_code": "EN004A",
+      "procedure_name": "Functional Endoscopic Sinus Surgery (FESS) - Bilateral",
+      "specialty": "Otorhinolaryngology (ENT)",
+      "rate_tier1": 24000,
+      "rate_tier2": 20000,
+      "rate_tier3": 18000,
+      "included_ward_days": 2,
+      "included_icu_days": 0,
+      "implant_ceiling_inr": 0,
+      "bundled_items": [
+        "Endoscopic tower, debrider disposables, nasal splints",
+        "General anesthesia, OT charges",
+        "Pre-op CT PNS coronal view bundling",
+        "Post-op nasal cavity packing and decongestant medications"
+      ]
+    },
+    {
+      "package_code": "PD001A",
+      "procedure_name": "Paediatric Herniotomy for Congenital Inguinal Hernia",
+      "specialty": "Paediatric Surgery",
+      "rate_tier1": 16800,
+      "rate_tier2": 14000,
+      "rate_tier3": 12600,
+      "included_ward_days": 2,
+      "included_icu_days": 0,
+      "implant_ceiling_inr": 0,
+      "bundled_items": [
+        "Paediatric surgeon and paediatric anesthesiologist fee",
+        "Micro-sutures (Vicryl/Monocryl), surgical consumables",
+        "Post-op pain analgesia and dressing",
+        "Ward accommodation and dietary support"
+      ]
+    },
+    {
+      "package_code": "PD005A",
+      "procedure_name": "Surgical Correction of Congenital Anorectal Malformation (PSARP)",
+      "specialty": "Paediatric Surgery",
+      "rate_tier1": 48000,
+      "rate_tier2": 40000,
+      "rate_tier3": 36000,
+      "included_ward_days": 5,
+      "included_icu_days": 1,
+      "implant_ceiling_inr": 0,
+      "bundled_items": [
+        "Pena muscle stimulator, fine surgical instrumentation",
+        "Colostomy care items and dilators (Hegar dilators)",
+        "Specialized neonatal ICU / pediatric high dependency care",
+        "Post-op imaging and 15 days antibiotic course"
+      ]
+    },
+    {
+      "package_code": "GE001A",
+      "procedure_name": "Upper GI Endoscopy with Endoscopic Band Ligation (EVL) for Esophageal Varices",
+      "specialty": "Medical Gastroenterology",
+      "rate_tier1": 14400,
+      "rate_tier2": 12000,
+      "rate_tier3": 10800,
+      "included_ward_days": 2,
+      "included_icu_days": 0,
+      "implant_ceiling_inr": 3500,
+      "bundled_items": [
+        "Multi-band ligator device / bands",
+        "Video gastroscope charges, conscious sedation medication",
+        "Pre-op hemoglobin and coagulation profile",
+        "Inpatient monitoring and anti-secretory IV therapy (Octreotide/Pantoprazole)"
+      ]
+    },
+    {
+      "package_code": "GE003A",
+      "procedure_name": "Endoscopic Retrograde Cholangiopancreatography (ERCP) with Biliary Stenting",
+      "specialty": "Medical Gastroenterology",
+      "rate_tier1": 30000,
+      "rate_tier2": 25000,
+      "rate_tier3": 22500,
+      "included_ward_days": 2,
+      "included_icu_days": 0,
+      "implant_ceiling_inr": 4500,
+      "bundled_items": [
+        "Duodenoscope charges, sphincterotome, guide wire, contrast media",
+        "Plastic biliary stent / extraction balloon",
+        "Fluoroscopy C-Arm time, gastroenterologist charges",
+        "Post-procedure serum amylase/lipase monitoring"
+      ]
+    },
+    {
+      "package_code": "NE001A",
+      "procedure_name": "Acute Ischemic Stroke Thrombolysis (Tissue Plasminogen Activator - Alteplase/Tenecteplase)",
+      "specialty": "Neurology",
+      "rate_tier1": 54000,
+      "rate_tier2": 45000,
+      "rate_tier3": 40500,
+      "included_ward_days": 3,
+      "included_icu_days": 2,
+      "implant_ceiling_inr": 30000,
+      "bundled_items": [
+        "Thrombolytic drug infusion (Tenecteplase / Alteplase)",
+        "Immediate non-contrast Head CT / CT Angiography",
+        "Continuous neuro-ICU monitoring for 24-48 hours",
+        "NIHSS neurological scoring and round-the-clock vitals tracking"
+      ]
+    },
+    {
+      "package_code": "PL001A",
+      "procedure_name": "Split Thickness Skin Grafting (STSG) for Extensive Deep Wounds / Burns",
+      "specialty": "Plastic & Reconstructive Surgery",
+      "rate_tier1": 26400,
+      "rate_tier2": 22000,
+      "rate_tier3": 19800,
+      "included_ward_days": 4,
+      "included_icu_days": 0,
+      "implant_ceiling_inr": 0,
+      "bundled_items": [
+        "Dermatome blades, skin mesher, paraffin tulle dressing (Bactigras)",
+        "Donor and recipient site sterile surgical drapes",
+        "General or regional anesthesia, surgeon fee",
+        "Post-op daily aseptic dressings and compression bandaging"
+      ]
+    },
+    {
+      "package_code": "BU001A",
+      "procedure_name": "Severe Inpatient Thermal Burns Management (20% to 40% TBSA)",
+      "specialty": "Burns Management",
+      "rate_tier1": 48000,
+      "rate_tier2": 40000,
+      "rate_tier3": 36000,
+      "included_ward_days": 7,
+      "included_icu_days": 3,
+      "implant_ceiling_inr": 0,
+      "bundled_items": [
+        "Parkland formula crystalloid fluid resuscitation (Ringer Lactate)",
+        "Silver sulfadiazine / collagen dressings and sterile linen",
+        "Daily electrolyte panel, albumin infusion, blood gas monitoring",
+        "Isolation burns ICU bed with temperature-controlled air handling"
+      ]
+    },
+    {
+      "package_code": "TR001A",
+      "procedure_name": "Polytrauma Damage Control Resuscitation and Hemoperitoneum Laparotomy",
+      "specialty": "Polytrauma",
+      "rate_tier1": 66000,
+      "rate_tier2": 55000,
+      "rate_tier3": 49500,
+      "included_ward_days": 5,
+      "included_icu_days": 3,
+      "implant_ceiling_inr": 0,
+      "bundled_items": [
+        "Emergency trauma laparotomy, intra-abdominal packing",
+        "FAST ultrasound examination, pelvic binder, massive transfusion disposables",
+        "Intensivist and trauma surgical surveillance in ICU",
+        "Closed suction drains and 15 days antibiotic course"
+      ]
+    },
+    {
+      "package_code": "MO001A",
+      "procedure_name": "Systemic Chemotherapy Regimen with Targeted Monoclonal Antibodies (Cycle 1)",
+      "specialty": "Medical Oncology",
+      "rate_tier1": 33600,
+      "rate_tier2": 28000,
+      "rate_tier3": 25200,
+      "included_ward_days": 2,
+      "included_icu_days": 0,
+      "implant_ceiling_inr": 18000,
+      "bundled_items": [
+        "Chemotherapy administration chamber, infusion pumps, chemo filters",
+        "Pre-chemo antiemetic protocol (Palonosetron, Aprepitant, Dexamethasone)",
+        "Complete hemogram, renal and liver function profiling",
+        "Post-chemo G-CSF filgrastim support if indicated"
+      ]
+    },
+    {
+      "package_code": "RO001A",
+      "procedure_name": "Intensity Modulated Radiation Therapy (IMRT) for Head and Neck Cancer (Course)",
+      "specialty": "Radiation Oncology",
+      "rate_tier1": 72000,
+      "rate_tier2": 60000,
+      "rate_tier3": 54000,
+      "included_ward_days": 0,
+      "included_icu_days": 0,
+      "implant_ceiling_inr": 0,
+      "bundled_items": [
+        "Linear accelerator treatment delivery (all fractions)",
+        "CT simulation, thermoplastic immobilization mask, contouring and dosimetry",
+        "Radiation oncologist and medical physicist treatment planning",
+        "Weekly toxicity review and supportive mouthwashes/ointments"
+      ]
+    },
+    {
+      "package_code": "PU001A",
+      "procedure_name": "Severe Acute Exacerbation of COPD / Bronchial Asthma with BiPAP Non-Invasive Ventilation",
+      "specialty": "Pulmonology / Respiratory Medicine",
+      "rate_tier1": 18000,
+      "rate_tier2": 15000,
+      "rate_tier3": 13500,
+      "included_ward_days": 3,
+      "included_icu_days": 1,
+      "implant_ceiling_inr": 0,
+      "bundled_items": [
+        "BiPAP non-invasive ventilator machine use, full face mask and circuit",
+        "Nebulization medications (Levosalbutamol, Ipratropium, Budesonide)",
+        "Arterial blood gas analyses, chest X-ray",
+        "Pulmonologist consultation and respiratory physiotherapy"
+      ]
+    },
+    {
+      "package_code": "PS001A",
+      "procedure_name": "Severe Psychiatric Emergency / Acute Psychosis Inpatient Stabilization",
+      "specialty": "Psychiatry",
+      "rate_tier1": 14400,
+      "rate_tier2": 12000,
+      "rate_tier3": 10800,
+      "included_ward_days": 5,
+      "included_icu_days": 0,
+      "implant_ceiling_inr": 0,
+      "bundled_items": [
+        "Psychiatric safe bed monitoring, restraint protocols, nursing surveillance",
+        "Emergency psychotropic medications (Haloperidol, Lorazepam, Olanzapine)",
+        "Clinical psychology assessment and psychiatric consultation",
+        "Discharge medications and supportive family counseling"
+      ]
+    },
+    {
+      "package_code": "DE001A",
+      "procedure_name": "Severe Inpatient Toxic Epidermal Necrolysis (TEN) / Stevens-Johnson Syndrome (SJS)",
+      "specialty": "Dermatology",
+      "rate_tier1": 36000,
+      "rate_tier2": 30000,
+      "rate_tier3": 27000,
+      "included_ward_days": 5,
+      "included_icu_days": 2,
+      "implant_ceiling_inr": 0,
+      "bundled_items": [
+        "Barrier nursing, specialized skin dressings and non-adherent silicone meshes",
+        "Systemic corticosteroid / IVIG therapy administration",
+        "Ophthalmological and mucosal membrane surveillance",
+        "Daily sterile dressings and nutritional repletion"
+      ]
     }
   ],
   "cashless_bundling_regulations": {
@@ -386,4 +641,3 @@
     "rule_5_tier_adjustments": "Tier 1 rates apply to Metro cities / NABH full accreditation. Tier 2 applies to Tier-II cities. Tier 3 applies to non-metro districts. Hospitals cannot bill Tier 1 rates if not officially accredited as Tier 1 by the State Health Agency."
   }
 }
-

@@ -114,30 +114,71 @@ def _generate_portal_preview_frame(
     return base64.b64encode(buf.getvalue()).decode("utf-8")
 
 
+# Active in-memory browser instances keyed by thread_id for cross-node HITL continuity
+_active_browser_sessions: dict[str, dict] = {}
+
+
+async def _cleanup_browser_session(thread_id: str):
+    """Safely close and clean up Playwright browser resources for a session."""
+    session = _active_browser_sessions.pop(thread_id, None)
+    if session:
+        try:
+            if session.get("page"):
+                await session["page"].close()
+            if session.get("browser"):
+                await session["browser"].close()
+            if session.get("playwright"):
+                await session["playwright"].stop()
+        except Exception as e:
+            logger.warning(f"Error during browser cleanup for {thread_id}: {e}")
+
+
 async def navigate_to_cgrms(state: GrievanceState) -> dict:
-    """Launch browser, navigate to live CGRMS portal, stream frame."""
-    logger.info(f"Navigating to CGRMS portal for thread {state['thread_id']}")
+    """Launch browser, navigate to live CGRMS portal, stream frame, and persist session."""
+    thread_id = state["thread_id"]
+    logger.info(f"Navigating to CGRMS portal for thread {thread_id}")
     url = settings.cgrms_url
     frame_b64 = None
 
     if PLAYWRIGHT_AVAILABLE:
         try:
+            # Clean up any stale session for this thread
+            await _cleanup_browser_session(thread_id)
+
             playwright = await async_playwright().start()
             browser = await playwright.chromium.launch(
                 headless=settings.playwright_headless,
                 args=["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
             )
             page = await browser.new_page(viewport={"width": 1280, "height": 720})
+
+            # Navigate with generous timeout
             try:
-                await page.goto(url, wait_until="domcontentloaded", timeout=12000)
+                await page.goto(url, wait_until="domcontentloaded", timeout=15000)
                 await asyncio.sleep(1.5)
+
+                # Attempt to click Grievance Registration if on landing page
+                try:
+                    btn = page.locator("text=Grievance Registration").first
+                    if await btn.count() > 0:
+                        await btn.click()
+                        await asyncio.sleep(1)
+                except Exception:
+                    pass
+
                 screenshot = await page.screenshot(type="png", full_page=False)
                 frame_b64 = base64.b64encode(screenshot).decode("utf-8")
+
+                # Store active browser session for next node
+                _active_browser_sessions[thread_id] = {
+                    "playwright": playwright,
+                    "browser": browser,
+                    "page": page,
+                }
             except Exception as net_e:
                 logger.warning(f"Live portal network wait: {net_e}")
-
-            await browser.close()
-            await playwright.stop()
+                await browser.close()
+                await playwright.stop()
         except Exception as e:
             logger.warning(f"Playwright navigation note: {e}")
 
@@ -158,30 +199,40 @@ async def navigate_to_cgrms(state: GrievanceState) -> dict:
 
 async def fill_grievance_form(state: GrievanceState) -> dict:
     """Populate grievance details on CGRMS portal, pause at OTP gate."""
-    logger.info(f"Filling grievance form on CGRMS for thread {state['thread_id']}")
-    url = settings.cgrms_url
+    thread_id = state["thread_id"]
+    logger.info(f"Filling grievance form on CGRMS for thread {thread_id}")
     frame_b64 = None
 
-    if PLAYWRIGHT_AVAILABLE:
+    session = _active_browser_sessions.get(thread_id)
+    if session and session.get("page"):
         try:
-            playwright = await async_playwright().start()
-            browser = await playwright.chromium.launch(
-                headless=settings.playwright_headless,
-                args=["--no-sandbox", "--disable-setuid-sandbox"],
-            )
-            page = await browser.new_page(viewport={"width": 1280, "height": 720})
-            try:
-                await page.goto(url, wait_until="domcontentloaded", timeout=12000)
-                await asyncio.sleep(1)
-                screenshot = await page.screenshot(type="png", full_page=False)
-                frame_b64 = base64.b64encode(screenshot).decode("utf-8")
-            except Exception as fe:
-                logger.warning(f"Live form navigation: {fe}")
+            page = session["page"]
 
-            await browser.close()
-            await playwright.stop()
-        except Exception as e:
-            logger.warning(f"Playwright form filling note: {e}")
+            # Fill grievance details if form fields exist
+            try:
+                # Fill grievance description / remarks
+                desc_selectors = [
+                    "textarea[name='grievanceDesc']",
+                    "textarea[name='remarks']",
+                    "textarea",
+                    "#grievanceDesc",
+                ]
+                desc_text = (
+                    f"AYUSHMAN-SHIELD AUDIT GRIEVANCE: Beneficiary overcharged INR {state.get('total_excess', 0):,.2f} "
+                    f"at {state.get('hospital_name', 'Hospital')}. Statutory bundling violation under NHA Section 4.2."
+                )
+                for sel in desc_selectors:
+                    if await page.locator(sel).count() > 0:
+                        await page.fill(sel, desc_text)
+                        break
+            except Exception as fe_field:
+                logger.debug(f"Form field filling detail: {fe_field}")
+
+            await asyncio.sleep(1)
+            screenshot = await page.screenshot(type="png", full_page=False)
+            frame_b64 = base64.b64encode(screenshot).decode("utf-8")
+        except Exception as fe:
+            logger.warning(f"Live form population note: {fe}")
 
     if not frame_b64:
         frame_b64 = _generate_portal_preview_frame(
@@ -199,8 +250,9 @@ async def fill_grievance_form(state: GrievanceState) -> dict:
 
 async def submit_with_otp(state: GrievanceState) -> dict:
     """Submit grievance with human-provided OTP and capture registration ID."""
+    thread_id = state["thread_id"]
     otp = state.get("otp_value")
-    logger.info(f"Submitting grievance with OTP for thread {state['thread_id']}")
+    logger.info(f"Submitting grievance with OTP for thread {thread_id}")
 
     if not otp:
         return {
@@ -209,29 +261,33 @@ async def submit_with_otp(state: GrievanceState) -> dict:
             "current_step": "otp_missing",
         }
 
-    grievance_id = f"CGRMS-PMJAY-2026-{state['thread_id'][:8].upper()}"
+    grievance_id = f"CGRMS-PMJAY-2026-{thread_id[:8].upper()}"
     frame_b64 = None
 
-    if PLAYWRIGHT_AVAILABLE:
+    session = _active_browser_sessions.get(thread_id)
+    if session and session.get("page"):
         try:
-            playwright = await async_playwright().start()
-            browser = await playwright.chromium.launch(
-                headless=settings.playwright_headless,
-                args=["--no-sandbox", "--disable-setuid-sandbox"],
-            )
-            page = await browser.new_page(viewport={"width": 1280, "height": 720})
-            try:
-                await page.goto(settings.cgrms_url, wait_until="domcontentloaded", timeout=12000)
-                await asyncio.sleep(1)
-                screenshot = await page.screenshot(type="png", full_page=False)
-                frame_b64 = base64.b64encode(screenshot).decode("utf-8")
-            except Exception as se:
-                logger.warning(f"Live submission frame capture: {se}")
+            page = session["page"]
 
-            await browser.close()
-            await playwright.stop()
-        except Exception as e:
-            logger.warning(f"Playwright submission note: {e}")
+            # Try to enter OTP into page
+            otp_selectors = ["input[name='otp']", "input[name='txtOtp']", "#otp", "input[type='password']"]
+            for sel in otp_selectors:
+                try:
+                    if await page.locator(sel).count() > 0:
+                        await page.fill(sel, str(otp))
+                        break
+                except Exception:
+                    pass
+
+            await asyncio.sleep(1)
+            screenshot = await page.screenshot(type="png", full_page=False)
+            frame_b64 = base64.b64encode(screenshot).decode("utf-8")
+        except Exception as se:
+            logger.warning(f"Live submission frame capture: {se}")
+        finally:
+            await _cleanup_browser_session(thread_id)
+    else:
+        await _cleanup_browser_session(thread_id)
 
     if not frame_b64:
         frame_b64 = _generate_portal_preview_frame(

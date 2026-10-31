@@ -61,6 +61,8 @@ class AuditResult(BaseModel):
     total_excess: Decimal = Decimal("0")
     hospital_verified: bool = False
     hospital_tier: str = "unknown"
+    patient_state: Optional[str] = None
+    patient_city: Optional[str] = None
     audit_score: int = Field(default=0, ge=0, le=100)
     pdf_report_url: Optional[str] = None
     voice_explanation_url: Optional[str] = None

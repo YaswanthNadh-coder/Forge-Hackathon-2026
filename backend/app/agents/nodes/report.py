@@ -7,27 +7,32 @@ import os
 import logging
 from pathlib import Path
 from datetime import datetime
-from reportlab.lib import colors
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import mm
-from reportlab.platypus import (
-    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle,
-    PageBreak, HRFlowable,
-)
-from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
+
+try:
+    from reportlab.lib import colors
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.units import mm
+    from reportlab.platypus import (
+        SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle,
+        PageBreak, HRFlowable,
+    )
+    from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
+    REPORTLAB_AVAILABLE = True
+    SEVERITY_COLORS = {
+        "critical": colors.HexColor("#DC2626"),
+        "high": colors.HexColor("#EA580C"),
+        "medium": colors.HexColor("#CA8A04"),
+        "low": colors.HexColor("#2563EB"),
+    }
+except ImportError:
+    REPORTLAB_AVAILABLE = False
+    SEVERITY_COLORS = {}
 
 from app.config import settings
 from app.agents.state import AuditState
 
 logger = logging.getLogger(__name__)
-
-SEVERITY_COLORS = {
-    "critical": colors.HexColor("#DC2626"),
-    "high": colors.HexColor("#EA580C"),
-    "medium": colors.HexColor("#CA8A04"),
-    "low": colors.HexColor("#2563EB"),
-}
 
 VIOLATION_TYPE_LABELS = {
     "overbilling": "Overbilling",
@@ -47,6 +52,27 @@ async def generate_report(state: AuditState) -> dict:
     reports_dir = Path(settings.reports_dir)
     reports_dir.mkdir(parents=True, exist_ok=True)
     pdf_path = reports_dir / f"{audit_id}.pdf"
+
+    if not REPORTLAB_AVAILABLE:
+        logger.warning("ReportLab library not available; generating plain text audit evidence annexure.")
+        summary_text = (
+            f"AYUSHMAN-SHIELD AUDIT EVIDENCE ANNEXURE\n"
+            f"Audit Session ID: {audit_id}\n"
+            f"Hospital: {state.get('hospital_name', 'EHCP')}\n"
+            f"State: {state.get('patient_state', 'N/A')}\n"
+            f"Total Billed: INR {float(state.get('total_billed', 0)):,.2f}\n"
+            f"Total Permissible (HBP 2022): INR {float(state.get('total_allowed', 0)):,.2f}\n"
+            f"Illegal Out-of-Pocket Overbilling: INR {float(state.get('total_excess', 0)):,.2f}\n"
+            f"Compliance Rating: {state.get('audit_score', 0)}/100\n"
+            f"Violations Identified: {len(state.get('violations', []))}\n"
+        )
+        pdf_path.write_text(summary_text, encoding="utf-8")
+        return {
+            "pdf_report_path": str(pdf_path),
+            "audit_summary_text": summary_text,
+            "current_node": "completed",
+            "status": "completed",
+        }
 
     doc = SimpleDocTemplate(
         str(pdf_path),

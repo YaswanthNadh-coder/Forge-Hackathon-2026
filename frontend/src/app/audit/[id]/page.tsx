@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, use, Suspense } from "react";
+import { useEffect, useState, use, Suspense, useRef, useCallback } from "react";
 import Link from "next/link";
 import { ArrowLeft, Loader2, AlertCircle, RefreshCw, Radio } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -33,10 +33,13 @@ function AuditPageInner({ params }: AuditPageProps) {
   const [isStartingGrievance, setIsStartingGrievance] = useState<boolean>(false);
   const [grievanceError, setGrievanceError] = useState<string | null>(null);
 
-  const fetchAuditData = async () => {
+  const statusRef = useRef<string>("processing");
+
+  const fetchAuditData = useCallback(async () => {
     try {
       const data = await getAuditResult(auditId);
       setAudit(data);
+      statusRef.current = data.status;
       if (data.status === "completed") {
         setCurrentNode("completed");
       }
@@ -46,17 +49,23 @@ function AuditPageInner({ params }: AuditPageProps) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [auditId]);
 
   useEffect(() => {
     fetchAuditData();
     const interval = setInterval(() => {
-      if (!audit || audit.status === "processing") {
+      if (
+        statusRef.current === "processing" ||
+        statusRef.current === "extracting" ||
+        statusRef.current === "verifying" ||
+        statusRef.current === "auditing" ||
+        statusRef.current === "generating_report"
+      ) {
         fetchAuditData();
       }
-    }, 3000);
+    }, 2500);
     return () => clearInterval(interval);
-  }, [auditId]);
+  }, [fetchAuditData]);
 
   const { isConnected } = useWebSocket({
     url: getWebSocketUrl(auditId),

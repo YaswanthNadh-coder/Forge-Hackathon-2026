@@ -150,6 +150,7 @@ async def download_report(audit_id: str):
 
 
 @router.get("/{audit_id}/voice")
+@router.post("/{audit_id}/voice")
 async def get_voice_explanation(audit_id: str, lang: str = "hi"):
     """
     Generate or retrieve a vernacular audio explanation of the audit findings

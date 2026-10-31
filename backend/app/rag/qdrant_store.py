@@ -3,9 +3,17 @@ Qdrant vector store management for HBP 2022 package data.
 Supports hybrid search with dense embeddings + BM25 sparse vectors.
 """
 
+from __future__ import annotations
+
 import logging
 from typing import Optional, List, Dict, Any
-from qdrant_client import QdrantClient, models
+
+try:
+    from qdrant_client import QdrantClient, models
+except ImportError:
+    QdrantClient = None
+    models = None
+
 from app.config import settings
 
 logger = logging.getLogger(__name__)
@@ -22,6 +30,11 @@ class QdrantManager:
 
     async def initialize(self):
         """Initialize Qdrant client and ensure collection exists."""
+        if not QdrantClient:
+            logger.warning("qdrant_client library not installed; operating in local dataset mode.")
+            self.client = None
+            return
+
         try:
             self.client = QdrantClient(
                 host=settings.qdrant_host,

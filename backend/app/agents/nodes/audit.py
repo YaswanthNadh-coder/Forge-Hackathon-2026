@@ -7,22 +7,29 @@ Includes a statutory rule-based compliance engine for resilient fallback.
 import re
 import json
 import uuid
+import asyncio
 import logging
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
-from google import genai
-from google.genai import types
+try:
+    from google import genai
+    from google.genai import types
+except ImportError:
+    genai = None
+    types = None
 
 from app.config import settings
 from app.agents.state import AuditState, AuditViolation
-from app.rag.retriever import hybrid_retrieve
+from app.rag.retriever import hybrid_retrieve, _load_local_hbp_cache
 
 logger = logging.getLogger(__name__)
 
 
-def get_gemini_client():
-    api_key = settings.gemini_api_key or "DUMMY_KEY_FOR_INIT"
-    return genai.Client(api_key=api_key)
+def get_gemini_client() -> Optional[Any]:
+    """Lazily initialize Gemini Client with verified API key."""
+    if not settings.has_gemini_key or not genai:
+        return None
+    return genai.Client(api_key=settings.gemini_api_key)
 
 
 AUDIT_PROMPT = """You are an expert PM-JAY (Ayushman Bharat) medical billing auditor with deep knowledge of the NHA Health Benefit Package (HBP) 2022 Master.
@@ -144,24 +151,26 @@ async def audit_bill(state: AuditState) -> dict:
             )
 
             client = get_gemini_client()
-            response = client.models.generate_content(
-                model=settings.gemini_model,
-                contents=[prompt],
-                config=types.GenerateContentConfig(
-                    temperature=0.1,
-                    max_output_tokens=8192,
-                    response_mime_type="application/json",
-                ),
-            )
+            if client:
+                response = await asyncio.to_thread(
+                    client.models.generate_content,
+                    model=settings.gemini_model,
+                    contents=[prompt],
+                    config=types.GenerateContentConfig(
+                        temperature=0.1,
+                        max_output_tokens=8192,
+                        response_mime_type="application/json",
+                    ),
+                )
 
-            result_text = (response.text or "").strip()
-            if "```json" in result_text:
-                result_text = result_text.split("```json")[1].split("```")[0].strip()
-            elif "```" in result_text:
-                result_text = result_text.split("```")[1].split("```")[0].strip()
+                result_text = (response.text or "").strip()
+                if "```json" in result_text:
+                    result_text = result_text.split("```json")[1].split("```")[0].strip()
+                elif "```" in result_text:
+                    result_text = result_text.split("```")[1].split("```")[0].strip()
 
-            audit_result = json.loads(result_text)
-            logger.info("Successfully audited bill line items using Gemini 2.5 Pro")
+                audit_result = json.loads(result_text)
+                logger.info("Successfully audited bill line items using Gemini 2.5 Pro")
         except Exception as e:
             logger.warning(f"Gemini audit call returned error: {e}. Executing statutory rule-based evaluator.")
 
@@ -202,64 +211,66 @@ async def audit_bill(state: AuditState) -> dict:
 
 def _fallback_rule_based_audit(line_items: List[dict], hbp_context_parts: List[str], state: AuditState) -> Dict[str, Any]:
     """
-    Statutory rule-based compliance evaluator strictly implementing NHA HBP 2022 bundling mandates.
+    Statutory rule-based compliance evaluator strictly implementing NHA HBP 2022 bundling mandates
+    dynamically cross-referencing the official NHA HBP 2022 master package registry.
     """
     violations = []
     tier = state.get("hospital_tier", "tier2").lower()
+    tier_key = f"rate_{tier}" if f"rate_{tier}" in ["rate_tier1", "rate_tier2", "rate_tier3"] else "rate_tier2"
 
-    # Known NHA HBP 2022 statutory package limits
-    # Tier 1 / Tier 2 rates for common procedures
-    procedure_tariffs = {
-        "knee": {"code": "OR001A", "name": "Total Knee Replacement", "tier1": 108000, "tier2": 90000, "tier3": 81000, "implant_cap": 65000},
-        "hip": {"code": "OR003B", "name": "Total Hip Replacement", "tier1": 114000, "tier2": 95000, "tier3": 85500, "implant_cap": 72000},
-        "cholecystectomy": {"code": "SG001A", "name": "Laparoscopic Cholecystectomy", "tier1": 30000, "tier2": 25000, "tier3": 22500, "implant_cap": 0},
-        "hernia": {"code": "SG008A", "name": "Inguinal Hernia Repair", "tier1": 21600, "tier2": 18000, "tier3": 16200, "implant_cap": 3500},
-        "cataract": {"code": "OP001A", "name": "Cataract Surgery", "tier1": 12000, "tier2": 10000, "tier3": 9000, "implant_cap": 3500},
-        "delivery": {"code": "OG001A", "name": "Normal Vaginal Delivery", "tier1": 13200, "tier2": 11000, "tier3": 9900, "implant_cap": 0},
-        "caesarean": {"code": "OG002A", "name": "Caesarean Section (LSCS)", "tier1": 24000, "tier2": 20000, "tier3": 18000, "implant_cap": 0},
-    }
-
-    matched_pkg = None
+    packages = _load_local_hbp_cache()
 
     for item in line_items:
         desc = item.get("description", "").lower()
         cat = item.get("category", "")
         billed = float(item.get("total_price", 0))
 
-        # Check for procedure match
-        for key, pkg_info in procedure_tariffs.items():
-            if key in desc:
-                matched_pkg = pkg_info
-                allowed = float(pkg_info.get(tier, pkg_info.get("tier2", 90000)))
-                if billed > allowed:
-                    violations.append({
-                        "line_item_id": item.get("id"),
-                        "violation_type": "rate_violation",
-                        "severity": "critical",
-                        "description": f"Package rate exceeds NHA HBP 2022 notified tariff for {pkg_info['name']}",
-                        "billed_amount": billed,
-                        "allowed_amount": allowed,
-                        "excess_amount": billed - allowed,
-                        "hbp_reference": f"{pkg_info['code']} ({tier.upper()})",
-                        "evidence": f"Official NHA HBP 2022 ceiling for {pkg_info['name']} in {tier.upper()} is ₹{allowed:,.0f}. Billed rate of ₹{billed:,.0f} constitutes an unauthorized rate violation under Section 4.2."
-                    })
-                break
+        # Check for procedure match against official HBP packages
+        if (cat == "procedure" or any(w in desc for w in ["replacement", "surgery", "resection", "angioplasty", "cabg", "appendectomy", "cholecystectomy", "mastectomy", "craniotomy", "herniotomy", "fess"])) and not any(non_proc in desc for non_proc in ["bed", "ward", "room", "registration", "admission", "glove", "syringe", "drape", "gauze"]):
+            for pkg in packages:
+                proc_name = pkg.get("procedure_name", "").lower()
+                code = pkg.get("package_code", "")
+
+                # Check if procedure name or key tokens match
+                tokens = [t for t in re.findall(r"\w+", proc_name) if len(t) > 3 and t not in ["with", "without", "single", "open", "care", "unit", "ward", "general"]]
+                match_count = sum(1 for t in tokens if t in desc)
+
+                if match_count >= 2 or (tokens and tokens[0] in desc and cat == "procedure"):
+                    allowed = float(pkg.get(tier_key, pkg.get("rate_tier2", 0)))
+                    if allowed > 0 and billed > allowed:
+                        violations.append({
+                            "line_item_id": item.get("id"),
+                            "violation_type": "rate_violation",
+                            "severity": "critical",
+                            "description": f"Package rate exceeds NHA HBP 2022 notified tariff for {pkg.get('procedure_name')}",
+                            "billed_amount": billed,
+                            "allowed_amount": allowed,
+                            "excess_amount": billed - allowed,
+                            "hbp_reference": f"{code} ({tier.upper()})",
+                            "evidence": f"Official NHA HBP 2022 ceiling for {pkg.get('procedure_name')} in {tier.upper()} is ₹{allowed:,.0f}. Billed rate of ₹{billed:,.0f} constitutes an unauthorized rate violation under Section 4.2."
+                        })
+                    break
 
         # Check for implant ceiling
         if cat == "implant" or any(w in desc for w in ["implant", "prosthesis", "stent", "mesh"]):
-            cap = 65000 if "knee" in desc else 34125 if "stent" in desc else 3500 if "mesh" in desc else 72000 if "hip" in desc else 50000
-            if billed > cap:
-                violations.append({
-                    "line_item_id": item.get("id"),
-                    "violation_type": "rate_violation",
-                    "severity": "high",
-                    "description": f"Implant charges exceed NPPA/NHA notified ceiling",
-                    "billed_amount": billed,
-                    "allowed_amount": cap,
-                    "excess_amount": billed - cap,
-                    "hbp_reference": "NPPA / NHA Notified Implant Ceiling",
-                    "evidence": f"Under NPPA price notification and NHA HBP 2022 rules, maximum permissible reimbursement for this implant category is ₹{cap:,.0f}. Margin markup of ₹{billed - cap:,.0f} is prohibited."
-                })
+            for pkg in packages:
+                implant_ceiling = float(pkg.get("implant_ceiling_inr", 0))
+                if implant_ceiling > 0:
+                    pkg_tokens = [t for t in re.findall(r"\w+", pkg.get("procedure_name", "").lower()) if len(t) > 3 and t not in ["with", "without", "single", "open", "care", "unit", "ward", "general"]]
+                    if any(t in desc for t in pkg_tokens):
+                        if billed > implant_ceiling:
+                            violations.append({
+                                "line_item_id": item.get("id"),
+                                "violation_type": "rate_violation",
+                                "severity": "high",
+                                "description": f"Implant charges exceed NPPA/NHA notified ceiling for {pkg.get('procedure_name')}",
+                                "billed_amount": billed,
+                                "allowed_amount": implant_ceiling,
+                                "excess_amount": billed - implant_ceiling,
+                                "hbp_reference": f"{pkg.get('package_code')} Implant Ceiling",
+                                "evidence": f"Under NPPA price notification and NHA HBP 2022 rules, maximum permissible reimbursement for this implant category is ₹{implant_ceiling:,.0f}. Margin markup of ₹{billed - implant_ceiling:,.0f} is prohibited."
+                            })
+                        break
 
         # Check for bundled items (Registration, bed, consumables, diagnostics)
         if any(w in desc for w in ["admission", "registration", "file charge"]):

@@ -58,7 +58,7 @@ class AuditState(TypedDict):
     hospital_empanelment_status: str
 
     # Audit outputs
-    violations: Annotated[list[AuditViolation], operator.add]
+    violations: list[AuditViolation]
     total_allowed: float
     total_excess: float
     audit_score: int
