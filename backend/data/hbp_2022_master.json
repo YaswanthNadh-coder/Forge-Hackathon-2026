@@ -1,0 +1,389 @@
+{
+  "version": "HBP 2022 Master v2.2",
+  "authority": "National Health Authority (NHA) - Government of India",
+  "scheme": "Ayushman Bharat - Pradhan Mantri Jan Arogya Yojana (AB PM-JAY)",
+  "specialties_count": 27,
+  "packages": [
+    {
+      "package_code": "CD001A",
+      "procedure_name": "Coronary Angiography",
+      "specialty": "Cardiology",
+      "rate_tier1": 13200,
+      "rate_tier2": 11000,
+      "rate_tier3": 9900,
+      "included_ward_days": 1,
+      "included_icu_days": 0,
+      "implant_ceiling_inr": 0,
+      "bundled_items": [
+        "Contrast dye (non-ionic)",
+        "Diagnostic catheters, guide wires, introducer sheath",
+        "Cath lab charges",
+        "Bed charges for Day Care / 1 day observation",
+        "Doctor consultation and nursing care",
+        "Pre-procedural ECG, Blood Urea, Serum Creatinine"
+      ]
+    },
+    {
+      "package_code": "CD002A",
+      "procedure_name": "Percutaneous Transluminal Coronary Angioplasty (PTCA) with Single Drug Eluting Stent",
+      "specialty": "Cardiology",
+      "rate_tier1": 84000,
+      "rate_tier2": 70000,
+      "rate_tier3": 63000,
+      "included_ward_days": 2,
+      "included_icu_days": 1,
+      "implant_ceiling_inr": 34125,
+      "bundled_items": [
+        "Single DES (NPPA capped at ₹34,125 inclusive of GST)",
+        "Balloon catheter, guide catheter, guide wire",
+        "Cath lab procedure charges & fluoroscopy time",
+        "ICU monitoring for 24 hours",
+        "Anticoagulant and antiplatelet drugs (Heparin, Clopidogrel, Ticagrelor)",
+        "Routine biochemistry, post-op ECGs and troponin assays",
+        "15 days post-discharge medications"
+      ]
+    },
+    {
+      "package_code": "CT001A",
+      "procedure_name": "Coronary Artery Bypass Grafting (CABG) - On Pump / Off Pump",
+      "specialty": "Cardio-Thoracic Surgery",
+      "rate_tier1": 156000,
+      "rate_tier2": 130000,
+      "rate_tier3": 117000,
+      "included_ward_days": 5,
+      "included_icu_days": 3,
+      "implant_ceiling_inr": 0,
+      "bundled_items": [
+        "Cardiopulmonary bypass circuit and oxygenator",
+        "Surgical disposable drapes, sternal wires, sutures, hemoclips",
+        "Operation Theatre charges, surgeon, perfusionist, anesthesiologist fees",
+        "ICU stay for 3 days with ventilator support if required",
+        "Chest drainage tubes and drainage bottles",
+        "Blood products cross-matching and transfusion disposables",
+        "Post-operative spirometry, physiotherapy, routine dressing",
+        "15 days discharge medicines"
+      ]
+    },
+    {
+      "package_code": "OR001A",
+      "procedure_name": "Unilateral Total Knee Replacement (TKR)",
+      "specialty": "Orthopaedics",
+      "rate_tier1": 108000,
+      "rate_tier2": 90000,
+      "rate_tier3": 81000,
+      "included_ward_days": 5,
+      "included_icu_days": 0,
+      "implant_ceiling_inr": 65000,
+      "bundled_items": [
+        "TKR Prosthesis (Femoral component, tibial tray, poly insert, patellar button)",
+        "Bone cement (antibiotic loaded)",
+        "Pulsatile lavage system, saw blades, surgical gowns, drape pack",
+        "OT charges, surgeon fees, spinal/epidural anesthesia charges",
+        "Post-op DVT prophylaxis (Enoxaparin / Dalteparin)",
+        "Inpatient physical rehabilitation & CPM machine therapy",
+        "Post-op digital radiographs (AP and Lateral views)",
+        "15 days post-discharge oral analgesics and antibiotic course"
+      ]
+    },
+    {
+      "package_code": "OR003B",
+      "procedure_name": "Unilateral Total Hip Replacement (THR) - Cemented / Uncemented",
+      "specialty": "Orthopaedics",
+      "rate_tier1": 114000,
+      "rate_tier2": 95000,
+      "rate_tier3": 85500,
+      "included_ward_days": 5,
+      "included_icu_days": 0,
+      "implant_ceiling_inr": 72000,
+      "bundled_items": [
+        "Hip prosthesis (Stem, Femoral head, Acetabular cup/liner)",
+        "OT charges, fluoroscopy / C-Arm charges",
+        "Bone cement (if cemented) or reamers",
+        "Post-op blood tests, physiotherapy, mobilization walker training",
+        "Surgical disposables, suction drains, dressing kits"
+      ]
+    },
+    {
+      "package_code": "OR012A",
+      "procedure_name": "Open Reduction and Internal Fixation (ORIF) of Long Bones with Plate & Screws",
+      "specialty": "Orthopaedics",
+      "rate_tier1": 36000,
+      "rate_tier2": 30000,
+      "rate_tier3": 27000,
+      "included_ward_days": 3,
+      "included_icu_days": 0,
+      "implant_ceiling_inr": 18000,
+      "bundled_items": [
+        "Dynamic Compression Plate (DCP) / Locking Compression Plate (LCP) and cortical/cancellous screws",
+        "C-Arm guidance charges",
+        "Surgical consumables, suction drain, bandage, POP slab/cast",
+        "Anesthesia, surgeon consultation, nursing care",
+        "Post-op confirmation radiograph"
+      ]
+    },
+    {
+      "package_code": "SG001A",
+      "procedure_name": "Laparoscopic Cholecystectomy",
+      "specialty": "General Surgery",
+      "rate_tier1": 30000,
+      "rate_tier2": 25000,
+      "rate_tier3": 22500,
+      "included_ward_days": 2,
+      "included_icu_days": 0,
+      "implant_ceiling_inr": 0,
+      "bundled_items": [
+        "Laparoscopic tower charges, insufflation gas (CO2)",
+        "Endo-clips (titanium/absorbable), harmonic scalpel / cautery disposables",
+        "OT charges, general anesthesia charges, surgical consumables",
+        "Pathological biopsy/histopathology of resected gallbladder specimen",
+        "Pre-op ultrasound abdomen and LFT tests",
+        "15 days post-discharge antibiotic & analgesics"
+      ]
+    },
+    {
+      "package_code": "SG003A",
+      "procedure_name": "Laparoscopic / Open Appendectomy",
+      "specialty": "General Surgery",
+      "rate_tier1": 24000,
+      "rate_tier2": 20000,
+      "rate_tier3": 18000,
+      "included_ward_days": 2,
+      "included_icu_days": 0,
+      "implant_ceiling_inr": 0,
+      "bundled_items": [
+        "Surgical instruments, sterile drapes, disposable gloves, trocar kits",
+        "General or spinal anesthesia medications",
+        "Histopathology examination of appendix",
+        "Antibiotic therapy and post-op wound dressings",
+        "Ward bed charges and round-the-clock nursing care"
+      ]
+    },
+    {
+      "package_code": "SG008A",
+      "procedure_name": "Unilateral Inguinal Hernia Repair with Prolene Mesh (Hernioplasty)",
+      "specialty": "General Surgery",
+      "rate_tier1": 21600,
+      "rate_tier2": 18000,
+      "rate_tier3": 16200,
+      "included_ward_days": 2,
+      "included_icu_days": 0,
+      "implant_ceiling_inr": 3500,
+      "bundled_items": [
+        "Polypropylene mesh (monofilament, minimum 7.5x15 cm)",
+        "Mesh fixation sutures / tackers",
+        "Spinal anesthesia charges, surgeon fee",
+        "Pre-op routine evaluation, ward bed stay",
+        "15 days post-discharge wound care and pain management"
+      ]
+    },
+    {
+      "package_code": "OG001A",
+      "procedure_name": "Normal Vaginal Delivery (NVD) with Episiotomy",
+      "specialty": "Obstetrics & Gynaecology",
+      "rate_tier1": 13200,
+      "rate_tier2": 11000,
+      "rate_tier3": 9900,
+      "included_ward_days": 3,
+      "included_icu_days": 0,
+      "implant_ceiling_inr": 0,
+      "bundled_items": [
+        "Labor room charges, fetal heart Doppler monitoring",
+        "Obstetrician, pediatrician and midwife charges",
+        "Episiotomy repair sutures and local anesthesia",
+        "Newborn immediate care, resuscitation, zero-day vaccinations (BCG, OPV, Hep B)",
+        "Dietary meal for mother, bed charges in postnatal ward for 3 days"
+      ]
+    },
+    {
+      "package_code": "OG002A",
+      "procedure_name": "Lower Segment Caesarean Section (LSCS) - Emergency or Elective",
+      "specialty": "Obstetrics & Gynaecology",
+      "rate_tier1": 24000,
+      "rate_tier2": 20000,
+      "rate_tier3": 18000,
+      "included_ward_days": 4,
+      "included_icu_days": 0,
+      "implant_ceiling_inr": 0,
+      "bundled_items": [
+        "OT charges, spinal anesthesia drugs, surgical disposable kit",
+        "Obstetrician and assistant surgeon fee",
+        "Pediatrician attendance at birth and newborn nursery evaluation",
+        "All IV fluids, antibiotics (Ampicillin, Gentamicin, Metronidazole), analgesics",
+        "Wound dressings, sutures, postnatal mother and baby care for 4 days"
+      ]
+    },
+    {
+      "package_code": "OG005A",
+      "procedure_name": "Total Abdominal Hysterectomy (TAH) with or without Bilateral Salpingo-Oophorectomy (BSO)",
+      "specialty": "Obstetrics & Gynaecology",
+      "rate_tier1": 36000,
+      "rate_tier2": 30000,
+      "rate_tier3": 27000,
+      "included_ward_days": 4,
+      "included_icu_days": 0,
+      "implant_ceiling_inr": 0,
+      "bundled_items": [
+        "Surgical laparotomy pack, sutures (Vicryl, Chromic catgut, Monocryl)",
+        "Spinal or general anesthesia",
+        "Histopathology of uterus and adnexa specimen",
+        "Foley catheter, suction drainage",
+        "4 days general ward bed charges and all inpatient medicines"
+      ]
+    },
+    {
+      "package_code": "OP001A",
+      "procedure_name": "Cataract Surgery by Phacoemulsification with Foldable Hydrophobic Intraocular Lens (IOL)",
+      "specialty": "Ophthalmology",
+      "rate_tier1": 12000,
+      "rate_tier2": 10000,
+      "rate_tier3": 9000,
+      "included_ward_days": 1,
+      "included_icu_days": 0,
+      "implant_ceiling_inr": 3500,
+      "bundled_items": [
+        "Foldable Posterior Chamber Hydrophobic IOL (certified USFDA/CE/BIS)",
+        "Viscoelastics (Sodium Hyaluronate / HPMC)",
+        "Phaco cassette, tubing, cystotome, keratomic blades",
+        "Pre-op keratometry, A-Scan biometry, post-op antibiotic/steroid eye drops",
+        "Day Care bed and ophthalmologist surgical fee"
+      ]
+    },
+    {
+      "package_code": "SU001A",
+      "procedure_name": "Transurethral Resection of the Prostate (TURP)",
+      "specialty": "Urology",
+      "rate_tier1": 33600,
+      "rate_tier2": 28000,
+      "rate_tier3": 25200,
+      "included_ward_days": 3,
+      "included_icu_days": 0,
+      "implant_ceiling_inr": 0,
+      "bundled_items": [
+        "Resectoscope loops, glycine/saline continuous irrigation fluid",
+        "3-way hematuria catheter, continuous bladder irrigation set",
+        "Spinal anesthesia, OT charges, urologist fee",
+        "Histopathology of resected prostate chips",
+        "Ward bed charges for 3 days and inpatient medicines"
+      ]
+    },
+    {
+      "package_code": "SU004A",
+      "procedure_name": "Percutaneous Nephrolithotomy (PCNL) for Renal Calculus",
+      "specialty": "Urology",
+      "rate_tier1": 42000,
+      "rate_tier2": 35000,
+      "rate_tier3": 31500,
+      "included_ward_days": 3,
+      "included_icu_days": 0,
+      "implant_ceiling_inr": 2500,
+      "bundled_items": [
+        "Amplatz sheath, nephroscope disposables, puncture needle, guide wire",
+        "DJ Stent placement and lithotripsy probe charges",
+        "Fluoroscopy C-Arm charges, nephrostomy tube",
+        "General / spinal anesthesia, post-op check X-ray KUB",
+        "Ward stay and supportive analgesic coverage"
+      ]
+    },
+    {
+      "package_code": "NP001A",
+      "procedure_name": "Hemodialysis Session (Single Session including Consumables)",
+      "specialty": "Nephrology",
+      "rate_tier1": 1800,
+      "rate_tier2": 1500,
+      "rate_tier3": 1350,
+      "included_ward_days": 1,
+      "included_icu_days": 0,
+      "implant_ceiling_inr": 0,
+      "bundled_items": [
+        "High-flux or low-flux dialyzer membrane",
+        "Blood tubing set, AV fistula needles (16G/17G)",
+        "Bicarbonate and acid dialysis concentrates",
+        "Heparin / Low molecular weight heparin anticoagulation",
+        "Nursing and dialysis technician charges, RO water treatment charges",
+        "Pre-dialysis and post-dialysis vitals monitoring and BUN/Creatinine"
+      ]
+    },
+    {
+      "package_code": "MG001A",
+      "procedure_name": "Acute Febrile Illness / Dengue / Malaria Management in General Ward",
+      "specialty": "General Medicine",
+      "rate_tier1": 2400,
+      "rate_tier2": 2000,
+      "rate_tier3": 1800,
+      "included_ward_days": 1,
+      "included_icu_days": 0,
+      "implant_ceiling_inr": 0,
+      "bundled_items": [
+        "Per-day package covering bed, nursing, physician visits",
+        "IV fluids (Normal Saline, Ringer Lactate, Dextrose)",
+        "Daily Complete Blood Count (CBC) and platelet count tracking",
+        "Supportive antipyretics and antiemetics (Paracetamol, Ondansetron)",
+        "Routine biochemistry and patient food"
+      ]
+    },
+    {
+      "package_code": "IC001A",
+      "procedure_name": "Intensive Care Unit (ICU) Care with Invasive Mechanical Ventilation",
+      "specialty": "Critical Care",
+      "rate_tier1": 7200,
+      "rate_tier2": 6000,
+      "rate_tier3": 5400,
+      "included_ward_days": 0,
+      "included_icu_days": 1,
+      "implant_ceiling_inr": 0,
+      "bundled_items": [
+        "Per-day capped rate for ICU bed with multi-para monitoring",
+        "Mechanical ventilator machine charges, breathing circuits, bacterial filters",
+        "Endotracheal tube or tracheostomy care, sterile closed suction catheters",
+        "Arterial Blood Gas (ABG) analyses up to 3 per day",
+        "Intensivist round-the-clock surveillance, 1:1 specialized ICU nursing",
+        "Syringe pumps, infusion sets, arterial line monitoring kits"
+      ]
+    },
+    {
+      "package_code": "NS001A",
+      "procedure_name": "Craniotomy and Evacuation of Intracranial Hematoma (EDH / SDH)",
+      "specialty": "Neurosurgery",
+      "rate_tier1": 78000,
+      "rate_tier2": 65000,
+      "rate_tier3": 58500,
+      "included_ward_days": 4,
+      "included_icu_days": 2,
+      "implant_ceiling_inr": 8000,
+      "bundled_items": [
+        "High-speed drill burrs, craniotome blades, bone wax, Surgicel / Gelfoam",
+        "Titanium cranial plates/screws for flap fixation",
+        "Subdural / subgaleal negative pressure drainage systems",
+        "ICU monitoring for 48 hours post-op with intracranial pressure monitoring",
+        "Neuro-anesthesia medications and post-op anti-epileptic drugs (Levetiracetam / Phenytoin)",
+        "Post-op non-contrast head CT scan"
+      ]
+    },
+    {
+      "package_code": "SO001A",
+      "procedure_name": "Modified Radical Mastectomy (MRM) with Axillary Lymph Node Dissection",
+      "specialty": "Surgical Oncology",
+      "rate_tier1": 42000,
+      "rate_tier2": 35000,
+      "rate_tier3": 31500,
+      "included_ward_days": 4,
+      "included_icu_days": 0,
+      "implant_ceiling_inr": 0,
+      "bundled_items": [
+        "Surgical oncological dissection consumables, electrocautery blades",
+        "Closed suction suction drains (Jackson-Pratt / Romovac 14/16 FG)",
+        "Comprehensive histopathological examination including tumor margins and nodal yield",
+        "Immunohistochemistry (ER, PR, HER2-neu) status evaluation",
+        "Post-operative compression dressings and arm lymphedema physiotherapy"
+      ]
+    }
+  ],
+  "cashless_bundling_regulations": {
+    "rule_1_mandatory_bundling": "All admission, nursing, doctor rounds, standard diagnostics, routine consumables (gloves, syringes, needles, cotton, spirit, IV sets, cannulas), inpatient medicines, and dietary food are 100% bundled into package rates. Charging any separate fees to PM-JAY cardholders is strictly illegal under Section 4.2 of the NHA Empanelment Agreement.",
+    "rule_2_implant_caps": "Implants can only be billed if notified in the HBP package and are strictly capped at NPPA/NHA ceiling limits. Any surcharge, margin markup, or brand substitution charge is a direct statutory violation.",
+    "rule_3_diagnostics": "Diagnostics performed within 3 days prior to admission related to the treated condition must be reimbursed or bundled into the package; separate cash billing of pre-op ultrasound, blood work, or ECG is prohibited.",
+    "rule_4_post_discharge": "Hospitals must dispense 15 days of essential take-home medications at discharge without demanding out-of-pocket cash from the beneficiary.",
+    "rule_5_tier_adjustments": "Tier 1 rates apply to Metro cities / NABH full accreditation. Tier 2 applies to Tier-II cities. Tier 3 applies to non-metro districts. Hospitals cannot bill Tier 1 rates if not officially accredited as Tier 1 by the State Health Agency."
+  }
+}
+
