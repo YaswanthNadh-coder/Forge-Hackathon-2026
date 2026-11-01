@@ -67,8 +67,12 @@ function AuditPageInner({ params }: AuditPageProps) {
     return () => clearInterval(interval);
   }, [fetchAuditData]);
 
+  const isTerminalStatus =
+    audit?.status === "completed" || audit?.status === "error";
+
   const { isConnected } = useWebSocket({
-    url: getWebSocketUrl(auditId),
+    url: isTerminalStatus ? null : getWebSocketUrl(auditId),
+    autoReconnect: !isTerminalStatus,
     onMessage: (msg) => {
       if (msg.type === "node_complete") {
         setCurrentNode(msg.node || msg.current_node);

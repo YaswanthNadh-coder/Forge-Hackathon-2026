@@ -25,8 +25,10 @@ export function BrowserStream({ threadId, initialFrame, initialStage, onComplete
   const [grievanceId, setGrievanceId] = useState<string | null>(null);
 
   // Connect to live browser screenshot stream
+  const isTerminalStage = stage === "completed" || stage === "error";
   const { isConnected } = useWebSocket({
-    url: getBrowserStreamUrl(threadId),
+    url: isTerminalStage ? null : getBrowserStreamUrl(threadId),
+    autoReconnect: !isTerminalStage,
     onMessage: (data) => {
       if (data.type === "browser_frame") {
         if (data.frame) setFrame(data.frame);

@@ -190,18 +190,23 @@ async def get_voice_explanation(audit_id: str, lang: str = "hi"):
 def _build_voice_summary(audit: AuditResult) -> str:
     """Build a natural conversational audit summary for vernacular speech synthesis."""
     hosp = audit.bill.hospital_name if audit.bill else "the hospital"
+    total_billed = float(audit.total_billed or 0)
+    total_allowed = float(audit.total_allowed or 0)
+    total_excess = float(audit.total_excess or 0)
     lines = [
         f"Ayushman Shield Audit Report for {hosp}.",
-        f"Your hospital bill had total charges of ₹{audit.total_billed:,.0f}.",
-        f"According to the official PM-JAY package guidelines, the permissible amount is ₹{audit.total_allowed:,.0f}.",
-        f"We found an illegal out-of-pocket overbilling of ₹{audit.total_excess:,.0f}.",
+        f"Your hospital bill had total charges of ₹{total_billed:,.0f}.",
+        f"According to the official PM-JAY package guidelines, the permissible amount is ₹{total_allowed:,.0f}.",
+        f"We found an illegal out-of-pocket overbilling of ₹{total_excess:,.0f}.",
     ]
     if audit.violations:
         lines.append(f"A total of {len(audit.violations)} statutory bundling violations were detected.")
         top_v = audit.violations[0]
+        top_billed = float(top_v.billed_amount or 0)
+        top_allowed = float(top_v.allowed_amount or 0)
         lines.append(
-            f"The primary overcharge was {top_v.description}, billed at ₹{top_v.billed_amount:,.0f} "
-            f"against allowed ₹{top_v.allowed_amount:,.0f}."
+            f"The primary overcharge was {top_v.description}, billed at ₹{top_billed:,.0f} "
+            f"against allowed ₹{top_allowed:,.0f}."
         )
     lines.append(
         "You have the statutory right under PM-JAY to full reimbursement. "

@@ -10,6 +10,7 @@ interface UseWebSocketOptions {
   onError?: (error: Event) => void;
   autoReconnect?: boolean;
   reconnectInterval?: number;
+  maxReconnectAttempts?: number;
 }
 
 export function useWebSocket({
@@ -20,10 +21,12 @@ export function useWebSocket({
   onError,
   autoReconnect = true,
   reconnectInterval = 3000,
+  maxReconnectAttempts = 10,
 }: UseWebSocketOptions) {
   const [isConnected, setIsConnected] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const reconnectAttemptsRef = useRef<number>(0);
 
   const connect = useCallback(() => {
     if (typeof window === "undefined" || !url) return;
@@ -34,6 +37,7 @@ export function useWebSocket({
 
       ws.onopen = () => {
         setIsConnected(true);
+        reconnectAttemptsRef.current = 0;
         onOpen?.();
       };
 
@@ -49,7 +53,12 @@ export function useWebSocket({
       ws.onclose = () => {
         setIsConnected(false);
         onClose?.();
-        if (autoReconnect && url) {
+        if (
+          autoReconnect &&
+          url &&
+          reconnectAttemptsRef.current < maxReconnectAttempts
+        ) {
+          reconnectAttemptsRef.current += 1;
           reconnectTimeoutRef.current = setTimeout(connect, reconnectInterval);
         }
       };
@@ -60,7 +69,7 @@ export function useWebSocket({
     } catch (e) {
       console.warn("WebSocket connection initialization error:", e);
     }
-  }, [url, onMessage, onOpen, onClose, onError, autoReconnect, reconnectInterval]);
+  }, [url, onMessage, onOpen, onClose, onError, autoReconnect, reconnectInterval, maxReconnectAttempts]);
 
   const disconnect = useCallback(() => {
     if (reconnectTimeoutRef.current) {
