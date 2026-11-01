@@ -152,25 +152,30 @@ async def audit_bill(state: AuditState) -> dict:
 
             client = get_gemini_client()
             if client:
-                response = await asyncio.to_thread(
-                    client.models.generate_content,
-                    model=settings.gemini_model,
-                    contents=[prompt],
-                    config=types.GenerateContentConfig(
-                        temperature=0.1,
-                        max_output_tokens=8192,
-                        response_mime_type="application/json",
-                    ),
-                )
+                candidate_models = [settings.gemini_model, "gemini-3.1-flash-lite", "gemini-3-flash-preview"]
+                for mod in candidate_models:
+                    try:
+                        response = await asyncio.to_thread(
+                            client.models.generate_content,
+                            model=mod,
+                            contents=[prompt],
+                            config=types.GenerateContentConfig(
+                                temperature=0.1,
+                                max_output_tokens=8192,
+                                response_mime_type="application/json",
+                            ),
+                        )
+                        result_text = (response.text or "").strip()
+                        if "```json" in result_text:
+                            result_text = result_text.split("```json")[1].split("```")[0].strip()
+                        elif "```" in result_text:
+                            result_text = result_text.split("```")[1].split("```")[0].strip()
 
-                result_text = (response.text or "").strip()
-                if "```json" in result_text:
-                    result_text = result_text.split("```json")[1].split("```")[0].strip()
-                elif "```" in result_text:
-                    result_text = result_text.split("```")[1].split("```")[0].strip()
-
-                audit_result = json.loads(result_text)
-                logger.info("Successfully audited bill line items using Gemini 2.5 Pro")
+                        audit_result = json.loads(result_text)
+                        logger.info(f"Successfully audited bill line items using Gemini ({mod})")
+                        break
+                    except Exception as model_err:
+                        logger.warning(f"Gemini model {mod} audit attempt: {model_err}")
         except Exception as e:
             logger.warning(f"Gemini audit call returned error: {e}. Executing statutory rule-based evaluator.")
 

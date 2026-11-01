@@ -108,7 +108,8 @@ class SarvamVoiceClient:
                         json={
                             "inputs": [chunk],
                             "target_language_code": lang_code,
-                            "model": "bulbul:v1",
+                            "speaker": "priya",
+                            "model": "bulbul:v3",
                             "enable_preprocessing": True,
                         },
                     )

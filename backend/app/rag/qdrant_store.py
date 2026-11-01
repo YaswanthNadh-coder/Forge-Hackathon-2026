@@ -19,7 +19,7 @@ from app.config import settings
 logger = logging.getLogger(__name__)
 
 COLLECTION_NAME = settings.qdrant_collection
-DENSE_DIM = 768  # Standard dimension for Gemini embeddings
+DENSE_DIM = 3072  # Standard dimension for Gemini embeddings
 
 
 class QdrantManager:

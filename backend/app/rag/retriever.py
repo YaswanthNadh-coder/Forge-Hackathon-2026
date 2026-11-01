@@ -92,19 +92,19 @@ def _get_sparse_vector(text: str) -> Tuple[List[int], List[float]]:
 async def get_embedding(text: str) -> List[float]:
     """Get dense embedding from Gemini embedding model."""
     if not settings.has_gemini_key or not genai:
-        return [0.0] * 768
+        return [0.0] * 3072
 
     try:
         client = genai.Client(api_key=settings.gemini_api_key)
         result = await asyncio.to_thread(
             client.models.embed_content,
-            model="text-embedding-004",
+            model="gemini-embedding-001",
             contents=text,
         )
         return result.embeddings[0].values
     except Exception as e:
         logger.warning(f"Dense embedding generation failed: {e}. Returning zero vector.")
-        return [0.0] * 768
+        return [0.0] * 3072
 
 
 def _search_local_hbp(query: str, top_k: int = 4) -> List[Dict[str, Any]]:

@@ -16,7 +16,7 @@ class Settings(BaseSettings):
 
     # Google Gemini
     gemini_api_key: str = Field(default="", alias="GEMINI_API_KEY")
-    gemini_model: str = "gemini-2.5-pro"
+    gemini_model: str = "gemini-3.5-flash"
 
     # Qdrant
     qdrant_host: str = "localhost"

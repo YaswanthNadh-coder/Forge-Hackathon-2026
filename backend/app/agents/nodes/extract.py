@@ -107,25 +107,30 @@ async def extract_bill(state: AuditState) -> dict:
                     pdf_data = file_path.read_bytes()
                     contents.append(types.Part.from_bytes(data=pdf_data, mime_type="application/pdf"))
 
-                response = await asyncio.to_thread(
-                    client.models.generate_content,
-                    model=settings.gemini_model,
-                    contents=contents,
-                    config=types.GenerateContentConfig(
-                        temperature=0.1,
-                        max_output_tokens=8192,
-                        response_mime_type="application/json",
-                    ),
-                )
+                candidate_models = [settings.gemini_model, "gemini-3.1-flash-lite", "gemini-3-flash-preview"]
+                for mod in candidate_models:
+                    try:
+                        response = await asyncio.to_thread(
+                            client.models.generate_content,
+                            model=mod,
+                            contents=contents,
+                            config=types.GenerateContentConfig(
+                                temperature=0.1,
+                                max_output_tokens=8192,
+                                response_mime_type="application/json",
+                            ),
+                        )
+                        result_text = (response.text or "").strip()
+                        if "```json" in result_text:
+                            result_text = result_text.split("```json")[1].split("```")[0].strip()
+                        elif "```" in result_text:
+                            result_text = result_text.split("```")[1].split("```")[0].strip()
 
-                result_text = (response.text or "").strip()
-                if "```json" in result_text:
-                    result_text = result_text.split("```json")[1].split("```")[0].strip()
-                elif "```" in result_text:
-                    result_text = result_text.split("```")[1].split("```")[0].strip()
-
-                extracted = json.loads(result_text)
-                logger.info("Successfully extracted bill line items using Gemini 2.5 Pro Vision")
+                        extracted = json.loads(result_text)
+                        logger.info(f"Successfully extracted bill line items using Gemini Vision ({mod})")
+                        break
+                    except Exception as model_err:
+                        logger.warning(f"Gemini model {mod} extraction attempt: {model_err}")
         except Exception as e:
             logger.warning(f"Gemini extraction call returned error: {e}. Executing text fallback parser.")
 
