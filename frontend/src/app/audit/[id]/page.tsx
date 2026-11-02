@@ -34,11 +34,24 @@ function AuditPageInner({ params }: AuditPageProps) {
   const [grievanceError, setGrievanceError] = useState<string | null>(null);
 
   const statusRef = useRef<string>("processing");
+  const isFetchingRef = useRef<boolean>(false);
 
   const fetchAuditData = useCallback(async () => {
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
     try {
       const data = await getAuditResult(auditId);
-      setAudit(data);
+      setAudit((prev) => {
+        if (!prev) return data;
+        if (
+          prev.status === data.status &&
+          prev.audit_score === data.audit_score &&
+          prev.violations?.length === data.violations?.length
+        ) {
+          return prev;
+        }
+        return data;
+      });
       statusRef.current = data.status;
       if (data.status === "completed") {
         setCurrentNode("completed");
@@ -48,6 +61,7 @@ function AuditPageInner({ params }: AuditPageProps) {
       setFetchError(err.message || "Failed to load audit results.");
     } finally {
       setIsLoading(false);
+      isFetchingRef.current = false;
     }
   }, [auditId]);
 
@@ -70,22 +84,23 @@ function AuditPageInner({ params }: AuditPageProps) {
   const isTerminalStatus =
     audit?.status === "completed" || audit?.status === "error";
 
+  const handleWebSocketMessage = useCallback((msg: any) => {
+    if (msg.type === "node_complete") {
+      setCurrentNode(msg.node || msg.current_node);
+      fetchAuditData();
+    } else if (msg.type === "audit_complete") {
+      setCurrentNode("completed");
+      fetchAuditData();
+    } else if (msg.type === "error") {
+      fetchAuditData();
+    }
+  }, [fetchAuditData]);
+
   const { isConnected } = useWebSocket({
     url: isTerminalStatus ? null : getWebSocketUrl(auditId),
     autoReconnect: !isTerminalStatus,
-    onMessage: (msg) => {
-      if (msg.type === "node_complete") {
-        setCurrentNode(msg.node || msg.current_node);
-        fetchAuditData();
-      } else if (msg.type === "audit_complete") {
-        setCurrentNode("completed");
-        fetchAuditData();
-      } else if (msg.type === "error") {
-        fetchAuditData();
-      }
-    },
+    onMessage: handleWebSocketMessage,
   });
-
   const handleStartGrievance = async () => {
     setIsStartingGrievance(true);
     setGrievanceError(null);
