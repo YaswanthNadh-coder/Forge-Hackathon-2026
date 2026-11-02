@@ -221,13 +221,13 @@ export function BillUpload() {
                 Hospital Name *
               </Label>
               <div className="relative mt-1.5">
-                <Hospital className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+                <Hospital className="w-4 h-4 absolute left-3 top-3 text-slate-400 pointer-events-none" />
                 <Input
                   required
                   placeholder="e.g. Max Super Speciality Hospital, Saket"
                   value={hospitalName}
                   onChange={(e) => setHospitalName(e.target.value)}
-                  className="pl-9 text-xs sm:text-sm"
+                  className="pl-9 text-xs sm:text-sm text-slate-900 dark:text-slate-100"
                 />
               </div>
               <p className="text-[11px] text-slate-500 mt-1">Cross-checked against official PM-JAY Empanelment registry</p>
@@ -240,10 +240,10 @@ export function BillUpload() {
               <select
                 value={stateName}
                 onChange={(e) => setStateName(e.target.value)}
-                className="w-full mt-1.5 h-10 px-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs sm:text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full mt-1.5 h-10 px-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs sm:text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
               >
                 {INDIAN_STATES.map((s) => (
-                  <option key={s} value={s}>
+                  <option key={s} value={s} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
                     {s}
                   </option>
                 ))}
@@ -256,13 +256,13 @@ export function BillUpload() {
                 City / District *
               </Label>
               <div className="relative mt-1.5">
-                <MapPin className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+                <MapPin className="w-4 h-4 absolute left-3 top-3 text-slate-400 pointer-events-none" />
                 <Input
                   required
                   placeholder="e.g. New Delhi"
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
-                  className="pl-9 text-xs sm:text-sm"
+                  className="pl-9 text-xs sm:text-sm text-slate-900 dark:text-slate-100"
                 />
               </div>
             </div>
@@ -272,15 +272,15 @@ export function BillUpload() {
                 PM-JAY Card Status *
               </Label>
               <div className="relative mt-1.5">
-                <CreditCard className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+                <CreditCard className="w-4 h-4 absolute left-3 top-3 text-slate-400 pointer-events-none" />
                 <select
                   value={cardStatus}
                   onChange={(e) => setCardStatus(e.target.value as any)}
-                  className="w-full h-10 pl-9 pr-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs sm:text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full h-10 pl-9 pr-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs sm:text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
                 >
-                  <option value="active">Active PM-JAY Cardholder (₹5 Lakh Entitlement)</option>
-                  <option value="pending">Golden Card Approved / Pending Generation</option>
-                  <option value="inactive">ABHA Registered / Scheme Eligible</option>
+                  <option value="active" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">Active PM-JAY Cardholder (₹5 Lakh Entitlement)</option>
+                  <option value="pending" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">Golden Card Approved / Pending Generation</option>
+                  <option value="inactive" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">ABHA Registered / Scheme Eligible</option>
                 </select>
               </div>
             </div>
@@ -293,7 +293,7 @@ export function BillUpload() {
                 placeholder="e.g. PMJAY-1234-5678 or 14-digit ABHA"
                 value={pmjayId}
                 onChange={(e) => setPmjayId(e.target.value)}
-                className="mt-1.5 text-xs sm:text-sm"
+                className="mt-1.5 text-xs sm:text-sm text-slate-900 dark:text-slate-100"
               />
               <p className="text-[11px] text-slate-500 mt-1">Masked locally before cloud transmission</p>
             </div>
@@ -307,7 +307,7 @@ export function BillUpload() {
                   type="date"
                   value={admissionDate}
                   onChange={(e) => setAdmissionDate(e.target.value)}
-                  className="mt-1.5 text-xs sm:text-sm"
+                  className="mt-1.5 text-xs sm:text-sm text-slate-900 dark:text-slate-100 [color-scheme:light] dark:[color-scheme:dark]"
                 />
               </div>
               <div>
@@ -318,7 +318,7 @@ export function BillUpload() {
                   type="date"
                   value={dischargeDate}
                   onChange={(e) => setDischargeDate(e.target.value)}
-                  className="mt-1.5 text-xs sm:text-sm"
+                  className="mt-1.5 text-xs sm:text-sm text-slate-900 dark:text-slate-100 [color-scheme:light] dark:[color-scheme:dark]"
                 />
               </div>
             </div>

@@ -77,10 +77,10 @@ export function VoicePlayer({ auditId, defaultLanguage = "hi" }: VoicePlayerProp
           <select
             value={selectedLang}
             onChange={(e) => setSelectedLang(e.target.value as Language)}
-            className="text-xs font-medium bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-44 cursor-pointer"
+            className="text-xs font-medium bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-44 cursor-pointer"
           >
             {Object.entries(LANGUAGE_LABELS).map(([code, name]) => (
-              <option key={code} value={code}>
+              <option key={code} value={code} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
                 {name}
               </option>
             ))}
