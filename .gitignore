@@ -33,6 +33,7 @@ reports/
 voice_outputs/
 test_data/
 create_test_bill.py
+create_test_suite.py
 test_e2e.py
 *.pdf
 *.wav
